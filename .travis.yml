@@ -1,6 +1,8 @@
 language: cpp
 sudo: required
 dist: trusty
+notifications:
+  email: false
 
 services:
    - docker
