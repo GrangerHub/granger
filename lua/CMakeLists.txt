@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.6)
 add_definitions(-Wall -Wextra -DLUA_COMPAT_5_2)
 
 if(APPLE)
