@@ -1,0 +1,32 @@
+language: cpp
+sudo: required
+dist: trusty
+
+services:
+   - docker
+
+git:
+    depth: 5
+
+script:
+    - ./misc/docker-build.sh
+
+matrix:
+  include: 
+    - os: linux
+      compiler: gcc
+      before_install:
+          - docker build -t wtfbbqhax/tremulous:v1 .
+          - docker run -v $(pwd):$(pwd) wtfbbqhax/tremulous:v1 ./misc/docker-build.sh
+
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
+
+deploy:
+    provider: releases
+    skip_cleanup: true
+    on:
+      tags: true
+    file_glob: true
+    file: "build/*.zip"
