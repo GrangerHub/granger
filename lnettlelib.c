@@ -34,6 +34,9 @@ static int lsha256_update(lua_State *L)
 	size_t len;
 
 	ctx = luaL_checkudata(L, 1, SHA256_CTX);
+	if (lua_isnil(L, 2)) {
+		return 0;
+	}
 	data = luaL_tolstring(L, 2, &len);
 	nettle_sha256_update(ctx, len, data);
 	return 0;
