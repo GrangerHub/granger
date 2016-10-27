@@ -5,5 +5,6 @@ function hash_file(file)
 		buf = f:read(0x10000)
 		ctx:update(buf)
 	until buf == nil
+	f:close()
 	return tostring(ctx)
 end

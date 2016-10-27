@@ -5,8 +5,11 @@
 #include "lua/lua.h"
 #include "lua/lauxlib.h"
 #include "lua/lualib.h"
+#include "premake/premake.h"
 
 #include "lnettlelib.h"
+
+extern const luaL_Reg extra_os_functions[];
 
 int main (int argc, char *argv[])
 {
@@ -21,6 +24,10 @@ int main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
+	premake_init(L);
+	premake_locate(L, argv[0]);
+	lua_setglobal(L, "_EXE_PATH");
+
 	luaL_openlibs(L);
 	luaL_requiref(L, "nettle", luaopen_nettle, 1);
 	lua_pop(L, 1);
@@ -33,8 +40,8 @@ int main (int argc, char *argv[])
 		lua_getglobal(L, "package");
 		lua_getfield(L, -1, "path");
 		path = lua_tostring(L, -1);
-		new_path = malloc(strlen(path) + strlen(main_path) + 8);
-		sprintf(new_path, "%s;%s%s?.lua", path, main_path, LUA_DIRSEP);
+		new_path = malloc(strlen(path) + strlen(main_path) * 2 + 20);
+		sprintf(new_path, "%s;%s%s?.lua;%s%s?%sinit.lua", path, main_path, LUA_DIRSEP, main_path, LUA_DIRSEP, LUA_DIRSEP);
 		lua_pop(L, 1);
 		lua_pushstring(L, new_path);
 		free(new_path);
