@@ -56,18 +56,21 @@ static const luaL_Reg string_functions[] = {
 int premake_init(lua_State* L)
 {
 	if (lua_getglobal(L, "path") != LUA_TTABLE) {
+		lua_pop(L, 1);
 		lua_newtable(L);
 	}
 	luaL_setfuncs (L, path_functions, 0);
 	lua_setglobal(L, "path");
 
 	if (lua_getglobal(L, "os") != LUA_TTABLE) {
+		lua_pop(L, 1);
 		lua_newtable(L);
 	}
 	luaL_setfuncs (L, os_functions, 0);
 	lua_setglobal(L, "os");
 
 	if (lua_getglobal(L, "string") != LUA_TTABLE) {
+		lua_pop(L, 1);
 		lua_newtable(L);
 	}
 	luaL_setfuncs (L, string_functions, 0);
