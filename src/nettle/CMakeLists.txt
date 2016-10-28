@@ -2,6 +2,10 @@ if(NOT WIN32)
     add_definitions(-Wall -Wextra)
 endif(NOT WIN32)
 
+if(WIN32)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif(WIN32)
+
 add_library(nettle
     macros.h
     nettle-stdint.h
