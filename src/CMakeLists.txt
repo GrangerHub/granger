@@ -6,6 +6,7 @@ find_library(CORESERVICES NAMES CoreServices)
 
 add_executable(tremulous-installer
     lnettlelib.c
+    lnettlelib.h
     main.c
     )
 
