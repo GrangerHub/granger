@@ -1,4 +1,6 @@
-add_definitions(-Wall -Wextra)
+if(NOT WIN32)
+    add_definitions(-Wall -Wextra)
+endif(NOT WIN32)
 
 add_library(premake
     os_chdir.c
@@ -19,5 +21,6 @@ add_library(premake
 	path_normalize.c
 	path_translate.c
 	premake.c
+	premake.h
 	string_endswith.c
     )
