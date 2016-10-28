@@ -27,7 +27,7 @@
 
 
 --
--- Check the current operating system; may be set with the /os command line flag.
+-- Check the current operating system.
 --
 
 	function os.is(id)
