@@ -26,6 +26,7 @@ static const luaL_Reg path_functions[] = {
 };
 
 static const luaL_Reg os_functions[] = {
+	{ "access",      os_access      },
 	{ "chdir",       os_chdir       },
 	{ "copyfile",    os_copyfile    },
 	{ "getcwd",      os_getcwd      },
