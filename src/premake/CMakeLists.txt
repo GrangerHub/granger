@@ -3,7 +3,7 @@ if(NOT WIN32)
 endif(NOT WIN32)
 
 add_library(premake
-    os_chdir.c
+	os_chdir.c
 	os_copyfile.c
 	os_getcwd.c
 	os_is64bit.c
