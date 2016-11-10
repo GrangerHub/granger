@@ -6,17 +6,6 @@
 
 
 --
--- Same as os.execute(), but accepts string formatting arguments.
---
-
-	function os.executef(cmd, ...)
-		cmd = string.format(cmd, unpack(arg))
-		return os.execute(cmd)
-	end
-
-
-
---
 -- Retrieve the current operating system ID string.
 --
 

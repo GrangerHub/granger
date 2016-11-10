@@ -15,9 +15,6 @@ Copy a file from one location to another.
 `os.elevate()`<br>
 Attempts to re-run process under elevated privlidges, returning true if elevated or false if unsuccessful.
 
-`os.executef(cmd, ...)`<br>
-Same as os.execute(), but accepts string formatting. arguments.
-
 `os.get()`<br>
 Retrieve the current operating system ID string.
 
