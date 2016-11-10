@@ -1,3 +1,5 @@
 require "lib"
 
-print "Hello World!"
+print("elevate result: " .. tostring(os.elevate()))
+
+print("Hello World!")

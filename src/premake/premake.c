@@ -29,6 +29,7 @@ static const luaL_Reg os_functions[] = {
 	{ "access",      os_access      },
 	{ "chdir",       os_chdir       },
 	{ "copyfile",    os_copyfile    },
+	{ "elevate",     os_elevate     },
 	{ "getcwd",      os_getcwd      },
 	{ "_is64bit",    os_is64bit     },
 	{ "isdir",       os_isdir       },
@@ -60,21 +61,21 @@ int premake_init(lua_State* L)
 		lua_pop(L, 1);
 		lua_newtable(L);
 	}
-	luaL_setfuncs (L, path_functions, 0);
+	luaL_setfuncs(L, path_functions, 0);
 	lua_setglobal(L, "path");
 
 	if (lua_getglobal(L, "os") != LUA_TTABLE) {
 		lua_pop(L, 1);
 		lua_newtable(L);
 	}
-	luaL_setfuncs (L, os_functions, 0);
+	luaL_setfuncs(L, os_functions, 0);
 	lua_setglobal(L, "os");
 
 	if (lua_getglobal(L, "string") != LUA_TTABLE) {
 		lua_pop(L, 1);
 		lua_newtable(L);
 	}
-	luaL_setfuncs (L, string_functions, 0);
+	luaL_setfuncs(L, string_functions, 0);
 	lua_setglobal(L, "string");
 
 	lua_pushstring(L, PLATFORM_STRING);

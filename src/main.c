@@ -13,7 +13,6 @@ extern const luaL_Reg extra_os_functions[];
 
 int main (int argc, char *argv[])
 {
-	int result;
 	char *main_path = ".";
 	char *main_lua;
 	lua_State *L;
@@ -24,29 +23,20 @@ int main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	premake_init(L);
-	premake_locate(L, argv[0]);
-	lua_setglobal(L, "_EXE_PATH");
-
 	luaL_openlibs(L);
 	luaL_requiref(L, "nettle", luaopen_nettle, 1);
 	lua_pop(L, 1);
 
-	if (argc > 1) {
-		const char *path;
-		char *new_path;
+	premake_init(L);
+	premake_locate(L, argv[0]);
+	lua_setglobal(L, "_EXE_PATH");
 
-		main_path = argv[1];
-		lua_getglobal(L, "package");
-		lua_getfield(L, -1, "path");
-		path = lua_tostring(L, -1);
-		new_path = malloc(strlen(path) + strlen(main_path) * 2 + 20);
-		sprintf(new_path, "%s;%s%s?.lua;%s%s?%sinit.lua", path, main_path, LUA_DIRSEP, main_path, LUA_DIRSEP, LUA_DIRSEP);
-		lua_pop(L, 1);
-		lua_pushstring(L, new_path);
-		free(new_path);
-		lua_setfield(L, -2, "path");
-		lua_pop(L, 1);
+	if (argc > 1) {
+		if (chdir(argv[1])) {
+			fprintf(stderr, "Error: unable to chdir\n");
+			lua_close(L);
+			return EXIT_FAILURE;
+		}
 	}
 
 	main_lua = malloc(strlen(main_path) + 10);

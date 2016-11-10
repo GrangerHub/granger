@@ -207,3 +207,15 @@
 		builtin_rmdir(p)
 	end
 
+
+--
+-- Elevate and set _ELEVATED global
+--
+
+	_ENV._ELEVATED = false
+	local builtin_elevate = os.elevate
+	function os.elevate()
+		_ENV._ELEVATED = builtin_elevate()
+		return _ENV._ELEVATED
+	end
+

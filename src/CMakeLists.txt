@@ -2,8 +2,6 @@ add_subdirectory(lua)
 add_subdirectory(nettle)
 add_subdirectory(premake)
 
-find_library(CORESERVICES NAMES CoreServices)
-
 add_executable(tremulous-installer
     lnettlelib.c
     lnettlelib.h
@@ -15,6 +13,10 @@ target_link_libraries(tremulous-installer lua nettle premake)
 if (NOT WIN32)
     target_link_libraries(tremulous-installer m dl)
 endif()
+
+if(WIN32)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif(WIN32)
 
 if (APPLE)
 	macro(ADD_FRAMEWORK fwname appname)
@@ -32,5 +34,6 @@ if (APPLE)
 	endmacro(ADD_FRAMEWORK)
 
 	add_framework(CoreServices tremulous-installer)
+	add_framework(Security tremulous-installer)
 endif()
 
