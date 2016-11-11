@@ -1,5 +1,11 @@
+--
+-- main.lua
+-- test runner
+-- Copyright (c) 2015 Jeff Kent <jeff@jkent.net>
+--
+
 package.path = package.path .. ";../lua/?.lua;../lua/?/init.lua"
 
 require "lib"
-require "test-access"
+require "test-os-access"
 require "test-nettle"
