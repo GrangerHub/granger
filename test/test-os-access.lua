@@ -8,10 +8,10 @@ print "os.access() test begin"
 
 if not os.is("windows") then
     p = os.tmpname()
-	--os.executef("touch %s; chmod 400 %s", p, p)
+	os.execute("touch " .. p .. "; chmod 400 " .. p)
 	assert(os.access(p, "r") == true)
-	--assert(os.access(p, "w") == false)
-	os.executef("rm -f %s", p)
+	assert(os.access(p, "w") == false)
+	os.execute("rm -f " .. p)
 end
 
 print "os.access() test end"

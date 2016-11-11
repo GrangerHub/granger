@@ -8,6 +8,9 @@ endif(WIN32)
 
 add_library(nettle
     macros.h
+    md5-compress.c
+    md5.c
+    md5.h
     nettle-stdint.h
     nettle-types.h
     nettle-write.h
@@ -16,4 +19,5 @@ add_library(nettle
     sha256.c
     version.h
     write-be32.c
+    write-le32.c
     )
