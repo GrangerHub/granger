@@ -143,6 +143,7 @@ static const luaL_Reg nettlelib[] = {
 	{NULL, NULL}
 };
 
+/* functions for md5 objects */
 static const luaL_Reg lmd5_methods[] = {
 	{"digest", lmd5_digest},
 	{"update", lmd5_update},
