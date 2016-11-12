@@ -1,7 +1,7 @@
 --
 -- main.lua
 -- test runner
--- Copyright (c) 2015 Jeff Kent <jeff@jkent.net>
+-- Copyright (c) 2016 Jeff Kent <jeff@jkent.net>
 --
 
 package.path = package.path .. ";../lua/?.lua;../lua/?/init.lua"

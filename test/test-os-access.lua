@@ -1,7 +1,7 @@
 --
 -- test-os-access.lua
 -- test case for os.access()
--- Copyright (c) 2015 Jeff Kent <jeff@jkent.net>
+-- Copyright (c) 2016 Jeff Kent <jeff@jkent.net>
 --
 
 print "os.access() test begin"

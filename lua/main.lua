@@ -1,7 +1,7 @@
 --
 -- main.lua
 -- Granger main
--- Copyright (c) 2015 Jeff Kent <jeff@jkent.net>
+-- Copyright (c) 2016 Jeff Kent <jeff@jkent.net>
 --
 
 require "lib"

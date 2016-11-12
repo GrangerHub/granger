@@ -1,7 +1,7 @@
 --
 -- util.lua
 -- various utility functions
--- Copyright (c) 2015 Jeff Kent <jeff@jkent.net>
+-- Copyright (c) 2016 Jeff Kent <jeff@jkent.net>
 --
 
 local function hash_file(file, ctx)

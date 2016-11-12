@@ -1,7 +1,7 @@
 --
 -- test-nettle.lua
 -- test cases for nettle library
--- Copyright (c) 2015 Jeff Kent <jeff@jkent.net>
+-- Copyright (c) 2016 Jeff Kent <jeff@jkent.net>
 --
 
 print "nettle tests begin"

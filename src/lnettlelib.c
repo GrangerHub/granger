@@ -1,6 +1,6 @@
 /*
  * This file is part of Granger.
- * Copyright (c) 2015 Jeff Kent <jeff@jkent.net>
+ * Copyright (c) 2016 Jeff Kent <jeff@jkent.net>
  *
  * Granger is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
