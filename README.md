@@ -1,6 +1,6 @@
-# tremulous-installer
-[![AppVeyor](https://img.shields.io/appveyor/ci/jkent/tremulous-installer.svg?style=flat-square)](https://ci.appveyor.com/project/jkent/tremulous-installer)
-[![Travis-CI](https://travis-ci.org/GrangerHub/tremulous-installer.svg?branch=master "Travis-CI")](https://travis-ci.org/GrangerHub/tremulous-installer)
+# Granger
+[![AppVeyor](https://img.shields.io/appveyor/ci/jkent/granger.svg?style=flat-square)](https://ci.appveyor.com/project/jkent/granger)
+[![Travis-CI](https://travis-ci.org/GrangerHub/granger.svg?branch=master "Travis-CI")](https://travis-ci.org/GrangerHub/granger)
 
 ### Lua API documentation
 `os.access(p, mode)`<br>

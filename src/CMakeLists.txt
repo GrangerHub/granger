@@ -2,16 +2,16 @@ add_subdirectory(lua)
 add_subdirectory(nettle)
 add_subdirectory(premake)
 
-add_executable(tremulous-installer
+add_executable(granger
     lnettlelib.c
     lnettlelib.h
     main.c
     )
 
-target_link_libraries(tremulous-installer lua nettle premake)
+target_link_libraries(granger lua nettle premake)
 
 if (NOT WIN32)
-    target_link_libraries(tremulous-installer m dl)
+    target_link_libraries(granger m dl)
 endif()
 
 if(WIN32)
@@ -33,7 +33,7 @@ if (APPLE)
 	    endif()
 	endmacro(ADD_FRAMEWORK)
 
-	add_framework(CoreServices tremulous-installer)
-	add_framework(Security tremulous-installer)
+	add_framework(CoreServices granger)
+	add_framework(Security granger)
 endif()
 

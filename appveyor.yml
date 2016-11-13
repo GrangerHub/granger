@@ -8,7 +8,7 @@ configuration:
 
 os: Visual Studio 2015
 
-clone_folder: c:\projects\tremulous-installer
+clone_folder: c:\projects\granger
 
 build_script:
   # show settings
@@ -17,7 +17,7 @@ build_script:
   - echo %configuration%
 
   # generate a solution file
-  - cd c:\projects\tremulous-installer
+  - cd c:\projects\granger
   - mkdir build
   - cd build
   - if "%platform%" == "x64" set cmake_platform=%platform%
@@ -26,7 +26,7 @@ build_script:
   # build it
   - if "%platform%" == "x86" set msbuild_platform=Win32
   - if "%platform%" == "x64" set msbuild_platform=%platform%
-  - msbuild tremulous-installer.sln /p:Configuration=%configuration% /toolsversion:14.0 /p:PlatformToolset=v140 /p:Platform=%msbuild_platform%
+  - msbuild granger.sln /p:Configuration=%configuration% /toolsversion:14.0 /p:PlatformToolset=v140 /p:Platform=%msbuild_platform%
 
 test_script:
   - if "%configuration%" == "Debug" ctest -VV --schedule-random -C Debug
