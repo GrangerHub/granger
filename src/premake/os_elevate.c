@@ -11,8 +11,8 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
+ *
  * along with Granger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "premake.h"
+#include "../strvec.h"
 
 #if defined(PLATFORM_WINDOWS)
 #include <shellapi.h>
@@ -27,6 +28,7 @@ static int do_elevate(lua_State *L)
 {
 	BOOL is_elevated = FALSE;
 	HANDLE hToken = NULL;
+
 	if (OpenProcessToken(GetCurrentProcess(),TOKEN_QUERY,&hToken)) {
 		TOKEN_ELEVATION Elevation;
 		DWORD cbSize = sizeof(TOKEN_ELEVATION);
@@ -42,27 +44,47 @@ static int do_elevate(lua_State *L)
 	}
 
 	char szPath[MAX_PATH];
-	if (GetModuleFileName(NULL, szPath, ARRAYSIZE(szPath))) {
-		char *params = GetCommandLine();
-		while (*params != '\0') {
-			if (*params == ' ') {
-				params++;
-				break;
-			}
-			params++;
-		}
-
-		SHELLEXECUTEINFO sei = { 0 };
-		sei.cbSize = sizeof(SHELLEXECUTEINFO);
-		sei.lpVerb = "runas";
-		sei.lpFile = szPath;
-		sei.lpParameters = params;
-		sei.nShow = SW_NORMAL;
-
-		if (ShellExecuteEx(&sei)) {
-			exit(0);
-		}
+	if (!GetModuleFileName(NULL, szPath, ARRAYSIZE(szPath))) {
+		return 0;
 	}
+
+	void *sv = StringVector_New();
+
+	lua_getglobal(L, "_GRANGER_SCRIPT");
+	StringVector_Add(sv, luaL_checkstring(L, 1));
+	lua_pop(L, 1);
+
+	lua_getglobal(L, "argv");
+	if (luaL_len(L, 1) > 0) {
+		StringVector_Add(sv, "--");
+	}
+
+	for (int i = 1; ; i++) {
+		lua_pushinteger(L, i);
+		lua_gettable(L, 1);
+		if (lua_isnil(L, -1)) {
+			break;
+		}
+		StringVector_Add(sv, luaL_checkstring(L, -1));
+		lua_pop(L, 1);
+	}
+	lua_pop(L, 1);
+
+	SHELLEXECUTEINFO sei = { 0 };
+	sei.cbSize = sizeof(SHELLEXECUTEINFO);
+	sei.lpVerb = "runas";
+	sei.lpFile = szPath;
+	sei.lpParameters = StringVector_toString(sv);
+	sei.nShow = SW_NORMAL;
+
+	StringVector_Delete(sv);
+
+	if (ShellExecuteEx(&sei)) {
+		free(sei.lpParameters);
+		exit(0);
+	}
+
+	free(sei.lpParameters);
 	return 0;
 }
 #endif
@@ -74,8 +96,8 @@ static int do_elevate(lua_State *L)
 static int do_elevate(lua_State *L)
 {
 	const char *execpath;
-	char cwd[PATH_MAX];
-	char *argv[2] = {0};
+	int argc = 0;
+	char **argv;
 
 	if (geteuid() == 0) {
 		return 1;
@@ -109,16 +131,37 @@ static int do_elevate(lua_State *L)
 		return 0;
 	}
 
-	getcwd(cwd, sizeof(cwd));
-	argv[0] = cwd;
+	void *sv = StringVector_New();
+
+	lua_getglobal(L, "_GRANGER_SCRIPT");
+	StringVector_Add(sv, luaL_checkstring(L, 1));
+	lua_pop(L, 1);
+
+	lua_getglobal(L, "argv");
+	if (luaL_len(L, 1) > 0) {
+		StringVector_Add(sv, "--");
+	}
+
+	for (int i = 1; ; i++) {
+		lua_pushinteger(L, i);
+		lua_gettable(L, 1);
+		if (lua_isnil(L, -1)) {
+			break;
+		}
+		StringVector_Add(sv, luaL_checkstring(L, -1));
+		lua_pop(L, 1);
+	}
+	lua_pop(L, 1);
 
 	flags = kAuthorizationFlagDefaults;
-	err = AuthorizationExecuteWithPrivileges(ref, execpath, flags, argv, NULL);
+	err = AuthorizationExecuteWithPrivileges(ref, execpath, flags, StringVector_GetVector(sv), NULL);
 	AuthorizationFree(ref, kAuthorizationFlagDefaults);
 	if (err != errAuthorizationSuccess) {
+		StringVector_Delete(sv);
 		return 0;
 	}
 
+	StringVector_Delete(sv);
 	exit(0);
 }
 #endif
@@ -127,9 +170,7 @@ static int do_elevate(lua_State *L)
 static int do_elevate(lua_State *L)
 {
 	char *pkexec, *display;
-	char cwd[PATH_MAX];
-	int argc = 0;
-	char *argv[6] = {0};
+	char cwd[PATH_MAX + 1];
 
 	if (geteuid() == 0) {
 		return 1;
@@ -148,17 +189,43 @@ static int do_elevate(lua_State *L)
 		return 0;
 	}
 
-	argv[argc++] = "pkexec";
-	argv[argc++] = "--user";
-	argv[argc++] = "root";
+	if (!getcwd(cwd, sizeof(cwd))) {
+		return 0;
+	}
+
+	void *sv = StringVector_New();
+	StringVector_Add(sv, "pkexec");
+	StringVector_Add(sv, "--user");
+	StringVector_Add(sv, "root");
 
 	lua_getglobal(L, "_EXE_PATH");
-	argv[argc++] = (char *) luaL_checkstring(L, 1);
+	StringVector_Add(sv, luaL_checkstring(L, 1));
+	lua_pop(L, 1);
 
-	getcwd(cwd, sizeof(cwd));
-	argv[argc++] = cwd;
+	StringVector_Add(sv, "-C");
+	StringVector_Add(sv, cwd);
 
-	execv(pkexec, argv);
+	lua_getglobal(L, "_GRANGER_SCRIPT");
+	StringVector_Add(sv, luaL_checkstring(L, 1));
+	lua_pop(L, 1);
+
+	lua_getglobal(L, "argv");
+	if (luaL_len(L, 1) > 0) {
+		StringVector_Add(sv, "--");
+	}
+
+	for (int i = 1; ; i++) {
+		lua_pushinteger(L, i);
+		lua_gettable(L, 1);
+		if (lua_isnil(L, -1)) {
+			break;
+		}
+		StringVector_Add(sv, luaL_checkstring(L, -1));
+		lua_pop(L, 1);
+	}
+	lua_pop(L, 1);
+
+	execv(pkexec, (char * const*)StringVector_GetVector(sv));
 
 	fprintf(stderr, "execv failed\n");
 	lua_pop(L, 1);

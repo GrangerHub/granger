@@ -3,19 +3,22 @@ add_subdirectory(nettle)
 add_subdirectory(premake)
 
 add_executable(granger
-    lnettlelib.c
-    lnettlelib.h
-    main.c
-    )
+	getopt.h
+	lnettlelib.c
+	lnettlelib.h
+	main.c
+	strvec.c
+	strvec.h
+	)
 
 target_link_libraries(granger lua nettle premake)
 
 if (NOT WIN32)
-    target_link_libraries(granger m dl)
+	target_link_libraries(granger m dl)
 endif()
 
 if(WIN32)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif(WIN32)
 
 if (APPLE)
@@ -26,14 +29,13 @@ if (APPLE)
 	    PATH_SUFFIXES Frameworks
 	    NO_DEFAULT_PATH)
 	    if( ${FRAMEWORK_${fwname}} STREQUAL FRAMEWORK_${fwname}-NOTFOUND)
-	        MESSAGE(ERROR ": Framework ${fwname} not found")
-	    else()
-	        TARGET_LINK_LIBRARIES(${appname} "${FRAMEWORK_${fwname}}/${fwname}")
-	        MESSAGE(STATUS "Framework ${fwname} found at ${FRAMEWORK_${fwname}}")
-	    endif()
+			MESSAGE(ERROR ": Framework ${fwname} not found")
+		else()
+			TARGET_LINK_LIBRARIES(${appname} "${FRAMEWORK_${fwname}}/${fwname}")
+			MESSAGE(STATUS "Framework ${fwname} found at ${FRAMEWORK_${fwname}}")
+		endif()
 	endmacro(ADD_FRAMEWORK)
 
 	add_framework(CoreServices granger)
 	add_framework(Security granger)
 endif()
-

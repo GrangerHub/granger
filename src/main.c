@@ -16,6 +16,7 @@
  * along with Granger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,15 +26,40 @@
 #include "lua/lualib.h"
 #include "premake/premake.h"
 
+#if defined(PLATFORM_WINDOWS)
+#include "getopt.h"
+#endif
+
 #include "lnettlelib.h"
 
 extern const luaL_Reg extra_os_functions[];
 
 int main (int argc, char *argv[])
 {
-	char *main_path = ".";
-	char *main_lua;
+	char *script_path;
 	lua_State *L;
+	int c;
+
+	while ((c = getopt(argc, argv, "C:")) != -1) {
+		switch (c) {
+		case 'C':
+			if (chdir(optarg)) {
+				fprintf(stderr, "could not change working directory\n");
+				return EXIT_FAILURE;
+			}
+			break;
+		case '?':
+		default:
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (optind >= argc || argv[optind][0] == '-') {
+		fprintf(stderr, "lua script not provided\n");
+		return EXIT_FAILURE;
+	}
+	script_path = argv[optind];
+	optind++;
 
 	L = luaL_newstate();
 	if (L == NULL) {
@@ -49,24 +75,23 @@ int main (int argc, char *argv[])
 	premake_locate(L, argv[0]);
 	lua_setglobal(L, "_EXE_PATH");
 
-	if (argc > 1) {
-		if (chdir(argv[1])) {
-			fprintf(stderr, "Error: unable to chdir\n");
-			lua_close(L);
-			return EXIT_FAILURE;
-		}
-	}
+	lua_pushstring(L, script_path);
+	lua_setglobal(L, "_GRANGER_SCRIPT");
 
-	main_lua = malloc(strlen(main_path) + 10);
-	sprintf(main_lua, "%s%smain.lua", main_path, LUA_DIRSEP);
-	if (luaL_dofile(L, main_lua)) {
+	lua_newtable(L);
+	for (int i = 1; optind < argc; i++, optind++) {
+		lua_pushinteger(L, i);
+		lua_pushstring(L, argv[optind]);
+		lua_settable(L, 1);
+	}
+	lua_setglobal(L, "argv");
+
+	if (luaL_dofile(L, script_path)) {
 		fprintf(stderr, "Error: %s\n", lua_tostring(L, -1));
-		free(main_lua);
 		lua_close(L);
 		return EXIT_FAILURE;
 	}
 
-	free(main_lua);
 	lua_close(L);
 	return EXIT_SUCCESS;
 }
